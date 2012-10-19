@@ -6,47 +6,34 @@
 //
 //  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 //  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-//  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer 
-//  in the documentation and/or other materials provided with the distribution. Neither the name of the Double Encore Inc. nor the names of its 
+//  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer
+//  in the documentation and/or other materials provided with the distribution. Neither the name of the Double Encore Inc. nor the names of its
 //  contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-//  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS 
-//  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-//  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+//  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+//  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+//  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 //  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
 #import "DEFacebookTextView.h"
 #import "DERuledView.h"
-#import "UIDevice+DEFacebookComposeViewController.h"
 
 
 @interface DEFacebookTextView ()
 
-@property (nonatomic, retain) DERuledView *ruledView;
-@property (nonatomic, retain) UIButton *fromButton;
-@property (nonatomic, retain) UIButton *accountButton;
-@property (nonatomic, retain) UIImageView *accountLine;
-
-- (void)textViewInit;
-- (CGRect)ruledViewFrame;
-- (void)updateAccountsView;
+@property (nonatomic, strong) DERuledView *ruledView;
+@property (nonatomic, strong) UIButton *fromButton;
+@property (nonatomic, strong) UIButton *accountButton;
+@property (nonatomic, strong) UIImageView *accountLine;
 
 @end
 
 
 @implementation DEFacebookTextView
 
-    // Public
 @synthesize accountName = _accountName;
 @dynamic fromButtonFrame;
-
-    // Private
-@synthesize ruledView = _ruledView;
-@synthesize fromButton = _fromButton;
-@synthesize accountButton = _accountButton;
-@synthesize accountLine = _accountLine;
-
 
 #pragma mark - Setup & Teardown
 
@@ -54,50 +41,29 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        [self textViewInit];
+        [self commonInit];
     }
-    
     return self;
 }
-
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self textViewInit];
+        [self commonInit];
     }
-    
     return self;
 }
 
-
-- (void)textViewInit
-{   
+- (void)commonInit
+{
     self.clipsToBounds = NO;  // So the rules can extend outside of the view.
-
     _ruledView = [[DERuledView alloc] initWithFrame:[self ruledViewFrame]];
     _ruledView.lineColor = [UIColor colorWithWhite:0.5f alpha:0.15f];
     _ruledView.lineWidth = 1.0f;
     _ruledView.rowHeight = self.font.lineHeight;
     [self insertSubview:self.ruledView atIndex:0];
 }
-
-
-- (void)dealloc
-{
-        // Public
-    [_accountName release], _accountName = nil;
-    
-        // Private
-    [_ruledView release], _ruledView = nil;
-    [_fromButton release], _fromButton = nil;
-    [_accountButton release], _accountButton = nil;
-    [_accountLine release], _accountLine = nil;
-    
-    [super dealloc];
-}
-
 
 #pragma mark - Superclass Overrides
 
@@ -125,13 +91,11 @@
     self.ruledView.frame = [self ruledViewFrame];
 }
 
-
 - (void)setContentSize:(CGSize)contentSize
 {
     [super setContentSize:contentSize];
     self.ruledView.frame = [self ruledViewFrame];
 }
-
 
 - (void)setFont:(UIFont *)font
 {
@@ -139,13 +103,12 @@
     self.ruledView.rowHeight = self.font.lineHeight;
 }
 
-
 #pragma mark - Private
 
 - (CGRect)ruledViewFrame
 {
     CGFloat extraForBounce = 200.0f;  // Extra added to top and bottom so it's visible when the user drags past the bounds.
-    CGFloat width = 1024.0f;  // Needs to be at least as wide as we might make the Tweet sheet.
+    CGFloat width = 1024.0f;  // Needs to be at least as wide as we might make the share sheet.
     CGFloat textAlignmentOffset = -2.0f;  // To center the text between the lines. May want to find a way to determine this procedurally eventually.
     
     CGRect frame;
@@ -181,7 +144,7 @@
             self.accountButton.titleLabel.font = [UIFont systemFontOfSize:17.0f];
             [self addSubview:self.accountButton];
             
-            self.accountLine = [[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"DEFacebookCardAccountLine"]] autorelease];
+            self.accountLine = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"DEFacebookCardAccountLine"]];
             [self addSubview:self.accountLine];
         }
         [self.accountButton setTitle:self.accountName forState:UIControlStateNormal];
@@ -202,8 +165,8 @@
 
 - (IBAction)accountButtonTouched
 {
-    if ([self.delegate respondsToSelector:@selector(tweetTextViewAccountButtonWasTouched:)]) {
-        [self.delegate performSelector:@selector(tweetTextViewAccountButtonWasTouched:) withObject:self];
+    if ([self.delegate respondsToSelector:@selector(facebookViewAccountButtonWasTouched:)]) {
+        [self.delegate performSelector:@selector(facebookViewAccountButtonWasTouched:) withObject:self];
     }
 }
 
@@ -213,7 +176,6 @@
 - (void)setAccountName:(NSString *)name
 {
     if ([_accountName isEqualToString:name] == NO) {
-        [_accountName release];
         _accountName = [name copy];
         [self updateAccountsView];
     }
