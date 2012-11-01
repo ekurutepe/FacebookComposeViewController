@@ -6,13 +6,13 @@
 //
 //  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 //  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-//  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer 
-//  in the documentation and/or other materials provided with the distribution. Neither the name of the Double Encore Inc. nor the names of its 
+//  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer
+//  in the documentation and/or other materials provided with the distribution. Neither the name of the Double Encore Inc. nor the names of its
 //  contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
-//  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS 
-//  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
-//  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT 
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+//  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+//  BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+//  GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 //  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
@@ -28,7 +28,6 @@
 #import "DEFacebookSheetCardView.h"
 #import "DEFacebookTextView.h"
 #import "DEFacebookGradientView.h"
-#import "UIDevice+DEFacebookComposeViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import <FacebookSDK/FacebookSDK.h>
 
@@ -40,16 +39,16 @@ static BOOL waitingForAccess = NO;
 @interface DEFacebookComposeViewController ()
 
 @property (nonatomic, copy) NSString *text;
-@property (nonatomic, retain) NSMutableArray *images;
-@property (nonatomic, retain) NSMutableArray *urls;
-@property (nonatomic, retain) NSArray *attachmentFrameViews;
-@property (nonatomic, retain) NSArray *attachmentImageViews;
+@property (nonatomic, strong) NSMutableArray *images;
+@property (nonatomic, strong) NSMutableArray *urls;
+@property (nonatomic, strong) NSArray *attachmentFrameViews;
+@property (nonatomic, strong) NSArray *attachmentImageViews;
 @property (nonatomic) UIStatusBarStyle previousStatusBarStyle;
-@property (nonatomic, assign) UIViewController *fromViewController;
-@property (nonatomic, retain) UIImageView *backgroundImageView;
-@property (nonatomic, retain) DEFacebookGradientView *gradientView;
-@property (nonatomic, retain) UIPickerView *accountPickerView;
-@property (nonatomic, retain) UIPopoverController *accountPickerPopoverController;
+@property (nonatomic, weak) UIViewController *fromViewController;
+@property (nonatomic, strong) UIImageView *backgroundImageView;
+@property (nonatomic, strong) DEFacebookGradientView *gradientView;
+@property (nonatomic, strong) UIPickerView *accountPickerView;
+@property (nonatomic, strong) UIPopoverController *accountPickerPopoverController;
 
 
 - (void)facebookComposeViewControllerInit;
@@ -63,7 +62,7 @@ static BOOL waitingForAccess = NO;
 
 @implementation DEFacebookComposeViewController
 
-    // IBOutlets
+// IBOutlets
 @synthesize cardView = _cardView;
 @synthesize titleLabel = _titleLabel;
 @synthesize cancelButton = _cancelButton;
@@ -80,10 +79,10 @@ static BOOL waitingForAccess = NO;
 @synthesize attachment3ImageView = _attachment3ImageView;
 @synthesize characterCountLabel = _characterCountLabel;
 
-    // Public
+// Public
 @synthesize completionHandler = _completionHandler;
 
-    // Private
+// Private
 @synthesize text = _text;
 @synthesize images = _images;
 @synthesize urls = _urls;
@@ -105,27 +104,23 @@ enum {
 
 #define degreesToRadians(x) (M_PI * x / 180.0f)
 
-
-#pragma mark - Class Methods
-
-
 #pragma mark - Setup & Teardown
-
 
 - (id)init
 {
+
 //    if ([[UIDevice currentDevice].systemVersion floatValue] >= 6) {
 //        self = [(DEFacebookComposeViewController*)[SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook] retain];
 //        return self;
 //    }
     
+
     self = [super init];
     if (self) {
         [self facebookComposeViewControllerInit];
     }
     return self;
 }
-
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -136,7 +131,6 @@ enum {
     return self;
 }
 
-
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];
@@ -146,52 +140,16 @@ enum {
     return self;
 }
 
-
 - (void)facebookComposeViewControllerInit
 {
     _images = [[NSMutableArray alloc] init];
     _urls = [[NSMutableArray alloc] init];
 }
 
-
-- (void)dealloc
+- (BOOL)de_isIOS5
 {
-        // IBOutlets
-    [_cardView release], _cardView = nil;
-    [_titleLabel release], _titleLabel = nil;
-    [_cancelButton release], _cancelButton = nil;
-    [_sendButton release], _sendButton = nil;
-    [_cardHeaderLineView release], _cardHeaderLineView = nil;
-    [_textView release], _textView = nil;
-    [_textViewContainer release], _textViewContainer = nil;
-    [_paperClipView release], _paperClipView = nil;
-    [_attachment1FrameView release], _attachment1FrameView = nil;
-    [_attachment2FrameView release], _attachment2FrameView = nil;
-    [_attachment3FrameView release], _attachment3FrameView = nil;
-    [_attachment1ImageView release], _attachment1ImageView = nil;
-    [_attachment2ImageView release], _attachment2ImageView = nil;
-    [_attachment3ImageView release], _attachment3ImageView = nil;
-    [_characterCountLabel release], _characterCountLabel = nil;
-    
-        // Public
-    [_completionHandler release], _completionHandler = nil;
-    
-        // Private
-    [_text release], _text = nil;
-    [_images release], _images = nil;
-    [_urls release], _urls = nil;
-    [_attachmentFrameViews release], _attachmentFrameViews = nil;
-    [_attachmentImageViews release], _attachmentImageViews = nil;
-    [_backgroundImageView release], _backgroundImageView = nil;
-    [_gradientView release], _gradientView = nil;
-    [_accountPickerView release], _accountPickerView = nil;
-    [_accountPickerPopoverController release], _accountPickerPopoverController = nil;
-    
-    NSLog(@"DEALLOC DEFacebookComposeViewController");
-    
-    [super dealloc];
+    return (NSClassFromString(@"NSJSONSerialization") != nil);
 }
-
 
 #pragma mark - Superclass Overrides
 
@@ -202,40 +160,30 @@ enum {
     self.textViewContainer.backgroundColor = [UIColor clearColor];
     self.textView.backgroundColor = [UIColor clearColor];
     
-    
-    
-    if ([UIDevice de_isIOS5]) {
+	self.textView.keyboardType = UIKeyboardTypeTwitter;
+    if ([self de_isIOS5]) {
         self.fromViewController = self.presentingViewController;
-        self.textView.keyboardType = UIKeyboardTypeTwitter;
-    }
-    else {
+    } else {
         self.fromViewController = self.parentViewController;
     }
     
+	// Put the attachment frames and image views into arrays so they're easier to work with.
+	// Order is important, so we can't use IB object arrays. Or at least this is easier.
+    self.attachmentFrameViews = @[self.attachment1FrameView,
+	self.attachment2FrameView,
+	self.attachment3FrameView];
     
+    self.attachmentImageViews = @[self.attachment1ImageView,
+	self.attachment2ImageView,
+	self.attachment3ImageView];
     
-    
-        // Put the attachment frames and image views into arrays so they're easier to work with.
-        // Order is important, so we can't use IB object arrays. Or at least this is easier.
-    self.attachmentFrameViews = [NSArray arrayWithObjects:
-                                 self.attachment1FrameView,
-                                 self.attachment2FrameView,
-                                 self.attachment3FrameView,
-                                 nil];
-    
-    self.attachmentImageViews = [NSArray arrayWithObjects:
-                                 self.attachment1ImageView,
-                                 self.attachment2ImageView,
-                                 self.attachment3ImageView,
-                                 nil];
-    
-        // Now add some angle to attachments 2 and 3.
+	// Now add some angle to attachments 2 and 3.
     self.attachment2FrameView.transform = CGAffineTransformMakeRotation(degreesToRadians(-6.0f));
     self.attachment2ImageView.transform = CGAffineTransformMakeRotation(degreesToRadians(-6.0f));
     self.attachment3FrameView.transform = CGAffineTransformMakeRotation(degreesToRadians(-12.0f));
     self.attachment3ImageView.transform = CGAffineTransformMakeRotation(degreesToRadians(-12.0f));
     
-        // Mask the corners on the image views so they don't stick out of the frame.
+	// Mask the corners on the image views so they don't stick out of the frame.
     [self.attachmentImageViews enumerateObjectsUsingBlock:^(id obj, NSUInteger index, BOOL *stop) {
         ((UIImageView *)obj).layer.cornerRadius = 3.0f;
         ((UIImageView *)obj).layer.masksToBounds = YES;
@@ -243,10 +191,6 @@ enum {
     
     self.textView.text = self.text;
     [self.textView becomeFirstResponder];
-    
-    
-
-    
     
     [self updateAttachments];
     
@@ -257,10 +201,9 @@ enum {
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
-    
-        // Now let's fade in a gradient view over the presenting view.
-    self.gradientView = [[[DEFacebookGradientView alloc] initWithFrame:[UIApplication sharedApplication].keyWindow.bounds] autorelease];
+	
+	// Now let's fade in a gradient view over the presenting view.
+    self.gradientView = [[DEFacebookGradientView alloc] initWithFrame:[UIApplication sharedApplication].keyWindow.bounds];
     self.gradientView.autoresizingMask = UIViewAutoresizingNone;
     self.gradientView.transform = self.fromViewController.view.transform;
     self.gradientView.alpha = 0.0f;
@@ -269,15 +212,13 @@ enum {
     [UIView animateWithDuration:0.3f
                      animations:^ {
                          self.gradientView.alpha = 1.0f;
-                     }];    
+                     }];
     
     self.previousStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:YES]; 
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:YES];
     
     [self updateFramesForOrientation:self.interfaceOrientation];
-    
 }
-
 
 - (void)viewDidAppear:(BOOL)animated
 {
@@ -299,12 +240,11 @@ enum {
     [self.navImage setNeedsDisplay];
 }
 
-
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
     
-    UIView *presentingView = [UIDevice de_isIOS5] ? self.fromViewController.view : self.parentViewController.view;
+    UIView *presentingView = [self de_isIOS5] ? self.fromViewController.view : self.parentViewController.view;
     [presentingView addSubview:self.gradientView];
     
     [self.backgroundImageView removeFromSuperview];
@@ -321,25 +261,23 @@ enum {
     [[UIApplication sharedApplication] setStatusBarStyle:self.previousStatusBarStyle animated:YES];
 }
 
-
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     if ([self.parentViewController respondsToSelector:@selector(shouldAutorotateToInterfaceOrientation:)]) {
         return [self.parentViewController shouldAutorotateToInterfaceOrientation:interfaceOrientation];
     }
     
-    if ([UIDevice de_isPhone]) {
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
     }
-
+	
     return YES;  // Default for iPad.
 }
-
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation duration:(NSTimeInterval)duration
 {
     [self updateFramesForOrientation:interfaceOrientation];
-
+	
     // Our fake background won't rotate properly. Just hide it.
     if (interfaceOrientation == self.presentedViewController.interfaceOrientation) {
         self.backgroundImageView.alpha = 1.0f;
@@ -349,25 +287,19 @@ enum {
     }
 }
 
-
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
-}
-
-
 - (void)viewDidUnload
 {
-        // Keep:
-        //  _completionHandler
-        //  _text
-        //  _images
-        //  _urls
-        //  _twitterAccount
+	// Keep:
+	//  _completionHandler
+	//  _text
+	//  _images
+	//  _urls
+	//  _twitterAccount
     
-        // Save the text.
+	// Save the text.
     self.text = self.textView.text;
     
-        // IBOutlets
+	// IBOutlets
     self.cardView = nil;
     self.titleLabel = nil;
     self.cancelButton = nil;
@@ -384,7 +316,7 @@ enum {
     self.attachment3ImageView = nil;
     self.characterCountLabel = nil;
     
-        // Private
+	// Private
     self.attachmentFrameViews = nil;
     self.attachmentImageViews = nil;
     self.gradientView = nil;
@@ -394,7 +326,6 @@ enum {
     [self setNavImage:nil];
     [super viewDidUnload];
 }
-
 
 #pragma mark - Public
 
@@ -410,7 +341,6 @@ enum {
     return YES;
 }
 
-
 - (BOOL)addImage:(UIImage *)image
 {
     [self.images removeAllObjects];
@@ -422,31 +352,27 @@ enum {
     if ([self isPresented]) {
         return NO;
     }
-        
+	
     [self.images addObject:image];
     return YES;
 }
 
-
 - (BOOL)addImageWithURL:(NSURL *)url;
-    // Not yet impelemented.
+// Not yet impelemented.
 {
-        // We should probably just start the download, rather than saving the URL.
-        // Just save the image once we have it.
+	// We should probably just start the download, rather than saving the URL.
+	// Just save the image once we have it.
     return NO;
 }
-
 
 - (BOOL)removeAllImages
 {
     if ([self isPresented]) {
         return NO;
     }
-    
     [self.images removeAllObjects];
     return YES;
 }
-
 
 - (BOOL)addURL:(NSString *)url
 {
@@ -454,24 +380,20 @@ enum {
     if (url == nil) {
         return NO;
     }
-    
     [self.urls addObject:url];
     return YES;
 }
 
-
-
-
 #pragma mark - Private
 
 - (void)updateFramesForOrientation:(UIInterfaceOrientation)interfaceOrientation
-{    
+{
     CGFloat buttonHorizontalMargin = 8.0f;
     CGFloat cardWidth, cardTop, cardHeight, cardHeaderLineTop, buttonTop;
     UIImage *cancelButtonImage, *sendButtonImage;
     CGFloat titleLabelFontSize, titleLabelTop;
     
-    if ([UIDevice de_isPhone]) {
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         cardWidth = CGRectGetWidth(self.view.bounds) - 10.0f;
         if (UIInterfaceOrientationIsPortrait(interfaceOrientation)) {
             cardTop = 25.0f;
@@ -533,7 +455,6 @@ enum {
     }
     CGFloat textTop = CGRectGetMaxY(self.cardHeaderLineView.frame) - 1.0f;
     
-    
     CGFloat textHeight = self.cardView.bounds.size.height - textTop - 30.0f;
     self.textViewContainer.frame = CGRectMake(0.0f, textTop, self.cardView.bounds.size.width, textHeight);
     self.textView.frame = CGRectMake(0.0f, 6.0f, textWidth, self.textViewContainer.frame.size.height-6);
@@ -544,9 +465,9 @@ enum {
                                           self.paperClipView.frame.size.width,
                                           self.paperClipView.frame.size.height);
     
-        // We need to position the rotated views by their center, not their frame.
-        // This isn't elegant, but it is correct. Half-points are required because
-        // some frame sizes aren't evenly divisible by 2.
+	// We need to position the rotated views by their center, not their frame.
+	// This isn't elegant, but it is correct. Half-points are required because
+	// some frame sizes aren't evenly divisible by 2.
     self.attachment1FrameView.center = CGPointMake(self.cardView.bounds.size.width - 45.0f, CGRectGetMaxY(self.paperClipView.frame) - cardTop + 18.0f);
     self.attachment1ImageView.center = CGPointMake(self.cardView.bounds.size.width - 45.5, self.attachment1FrameView.center.y - 2.0f);
     
@@ -566,21 +487,15 @@ enum {
     [self.navImage setNeedsDisplay];
 }
 
-
 - (BOOL)isPresented
 {
     return [self isViewLoaded];
 }
 
-
-
-
-
 - (NSInteger)attachmentsCount
 {
     return [self.images count] + [self.urls count];
 }
-
 
 - (void)updateAttachments
 {
@@ -593,7 +508,7 @@ enum {
     }
     self.textView.frame = frame;
     
-        // Create a array of attachment images to display.
+	// Create a array of attachment images to display.
     NSMutableArray *attachmentImages = [NSMutableArray arrayWithArray:self.images];
     for (NSInteger index = 0; index < [self.urls count]; index++) {
         [attachmentImages addObject:[UIImage imageNamed:@"DEFacebookURLAttachment"]];
@@ -607,60 +522,56 @@ enum {
     if ([attachmentImages count] >= 1) {
         self.paperClipView.hidden = NO;
         self.attachment1FrameView.hidden = NO;
-        self.attachment1ImageView.image = [attachmentImages objectAtIndex:0];
+        self.attachment1ImageView.image = attachmentImages[0];
         
         if ([attachmentImages count] >= 2) {
             self.paperClipView.hidden = NO;
             self.attachment2FrameView.hidden = NO;
-            self.attachment2ImageView.image = [attachmentImages objectAtIndex:1];
+            self.attachment2ImageView.image = attachmentImages[1];
             
             if ([attachmentImages count] >= 3) {
                 self.paperClipView.hidden = NO;
                 self.attachment3FrameView.hidden = NO;
-                self.attachment3ImageView.image = [attachmentImages objectAtIndex:2];
+                self.attachment3ImageView.image = attachmentImages[2];
             }
         }
     }
 }
 
-
-
-
 #pragma mark - Actions
 
 - (IBAction)send
 {
-    
     if (![FBSession.activeSession isOpen]) {
         
+
         [FBSession openActiveSessionWithPublishPermissions:@[@"publish_stream"]
                                            defaultAudience:FBSessionDefaultAudienceEveryone
                                               allowLoginUI:YES
-
-                                  completionHandler:^(FBSession *session,
-                                                      FBSessionState status,
-                                                      NSError *error) {
-                                      
-                                      if (error) {
-                                          NSLog(@"error");
-                                      } else {
-                                          [FBSession setActiveSession:session];
-                                          [self.sendButton setTitle:@"Post" forState:UIControlStateNormal];
-                                      }
-                                  }];
+		 
+										 completionHandler:^(FBSession *session,
+															 FBSessionState status,
+															 NSError *error) {
+											 
+											 if (error) {
+												 NSLog(@"error");
+											 } else {
+												 [FBSession setActiveSession:session];
+												 [self.sendButton setTitle:@"Post" forState:UIControlStateNormal];
+											 }
+										 }];
         
         return;
     }
     
     
     self.sendButton.enabled = NO;
-        
+	
     UIActivityIndicatorView *activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     [activity setCenter:CGPointMake(_sendButton.frame.size.width/2, _sendButton.frame.size.height/2)];
     [_sendButton setTitle:@"" forState:UIControlStateNormal];
     [_sendButton addSubview:activity];
     [activity startAnimating];
-    [activity release];
     self.view.userInteractionEnabled = NO;
     
     NSMutableDictionary *d = nil;
@@ -677,16 +588,16 @@ enum {
     
     
     if ([self.urls count] > 0) {
-        [d setObject:[self.urls lastObject] forKey:@"link"];
+        d[@"link"] = [self.urls lastObject];
     }
     
     if ([self.images count] > 0) {
-        [d setObject:UIImagePNGRepresentation([self.images lastObject]) forKey:@"source"];
+        d[@"source"] = UIImagePNGRepresentation([self.images lastObject]);
         graphPath = @"me/photos";
     }
-
+	
     // create the connection object
-    FBRequestConnection *newConnection = [[[FBRequestConnection alloc] init] autorelease];
+    FBRequestConnection *newConnection = [[FBRequestConnection alloc] init];
     FBRequest *request = [[FBRequest alloc] initWithSession:FBSession.activeSession
                                                   graphPath:graphPath
                                                  parameters:d
@@ -702,11 +613,11 @@ enum {
             [self.sendButton setTitle:@"Post" forState:UIControlStateNormal];
             self.view.userInteractionEnabled = YES;
             
-            UIAlertView *alertView = [[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot Send Message", @"")
-                                                                 message:[NSString stringWithFormat:NSLocalizedString(@"The message, \"%@\" cannot be sent because the connection to Facebook failed.", @""), self.textView.text]
-                                                                delegate:self
-                                                       cancelButtonTitle:NSLocalizedString(@"Cancel", @"")
-                                                       otherButtonTitles:NSLocalizedString(@"Try Again", @""), nil] autorelease];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Cannot Send Message", @"")
+																message:[NSString stringWithFormat:NSLocalizedString(@"The message, \"%@\" cannot be sent because the connection to Facebook failed.", @""), self.textView.text]
+															   delegate:self
+													  cancelButtonTitle:NSLocalizedString(@"Cancel", @"")
+													  otherButtonTitles:NSLocalizedString(@"Try Again", @""), nil];
             alertView.tag = DEFacebookComposeViewControllerCannotSendAlert;
             [alertView show];
             
@@ -731,15 +642,13 @@ enum {
             else {
                 [self dismissModalViewControllerAnimated:YES];
             }
-
+			
             NSLog(@"   ok");
         };
     }];
     
     [newConnection start];
-    [request release];
 }
-
 
 - (IBAction)cancel
 {
@@ -751,25 +660,23 @@ enum {
     }
 }
 
-
 #pragma mark - UIAlertViewDelegate
 
 + (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-    // Notice this is a class method since we're displaying the alert from a class method.
+// Notice this is a class method since we're displaying the alert from a class method.
 {
     // no op
 }
 
-
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-    // This gets called if there's an error sending the tweet.
+// This gets called if there's an error sending the post.
 {
     if (alertView.tag == DEFacebookComposeViewControllerNoAccountsAlert) {
         [self dismissModalViewControllerAnimated:YES];
     }
     else if (alertView.tag == DEFacebookComposeViewControllerCannotSendAlert) {
         if (buttonIndex == 1) {
-                // The user wants to try again.
+			// The user wants to try again.
             [self send];
         }
     }

@@ -56,7 +56,3 @@ Facebook connection using Facebook SDK 3.1
 }
 ```
 
-
-
-
-
