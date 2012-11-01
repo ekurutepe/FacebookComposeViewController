@@ -1,15 +1,16 @@
-This project based on https://github.com/doubleencore/DETweetComposeViewController
+This project is based on https://github.com/sakrist/FacebookSample which itself is based on https://github.com/doubleencore/DETweetComposeViewController
 
-Facebook connection based on SDK 3.1 (last at 25 september 2012)
+Facebook connection using Facebook SDK 3.1
 
+##What is it?
 
-What is it?
-DEFacebookComposeViewController is an iOS 4 compatible. 
-Looks like as the Facebook Sheet in iOS 6.
+- DEFacebookComposeViewController is an iOS 4 compatible. 
+- Looks like as the Facebook Sheet in iOS 6.
+- Allows you to use your own Facebook APP_ID when posting to the user's feed.
 
 <img src="https://raw.github.com/sakrist/FacebookSample/master/Screen%20Shot%202012-09-10%20at%2010.30.48%20PM.jpg" />
 
-How to use
+##How to use
 
 1. download and setup Facebook sdk https://developers.facebook.com/ios/ or from git https://github.com/facebook/facebook-ios-sdk
 
