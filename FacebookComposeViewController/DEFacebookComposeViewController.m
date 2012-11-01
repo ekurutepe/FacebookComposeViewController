@@ -114,10 +114,10 @@ enum {
 
 - (id)init
 {
-    if ([[UIDevice currentDevice].systemVersion floatValue] >= 6) {
-        self = [(DEFacebookComposeViewController*)[SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook] retain];
-        return self;
-    }
+//    if ([[UIDevice currentDevice].systemVersion floatValue] >= 6) {
+//        self = [(DEFacebookComposeViewController*)[SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook] retain];
+//        return self;
+//    }
     
     self = [super init];
     if (self) {
