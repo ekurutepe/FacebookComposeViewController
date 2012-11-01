@@ -633,8 +633,7 @@ enum {
     
     if (![FBSession.activeSession isOpen]) {
         
-        [FBSession openActiveSessionWithPublishPermissions:[NSArray arrayWithObjects: @"read_stream", @"publish_actions",
-                                                            @"publish_stream", nil]
+        [FBSession openActiveSessionWithPublishPermissions:@[@"publish_stream"]
                                            defaultAudience:FBSessionDefaultAudienceEveryone
                                               allowLoginUI:YES
 
